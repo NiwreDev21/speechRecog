@@ -657,10 +657,14 @@
 </div>
 
 <!-- ============ AI TUTOR PANEL ============ -->
+<!-- Reemplaza el bloque completo <div class="ai-panel hidden" id="ai-panel"> ... </div> en tu index.html -->
+
 <div class="ai-panel hidden" id="ai-panel">
-  <div class="ai-panel-header">
+
+  <!-- ── HEADER ─────────────────────────────────── -->
+  <div class="ai-panel-header" id="ai-panel-header">
     <div class="ai-panel-header-info">
-      <div class="ai-avatar"><span class="msi">smart_toy</span></div>
+      <div class="ai-avatar-chip"><span class="msi">smart_toy</span></div>
       <div>
         <div class="ai-panel-title">AI Tutor</div>
         <div class="ai-status-row">
@@ -669,10 +673,23 @@
         </div>
       </div>
     </div>
-    <button class="ai-panel-close" id="ai-panel-close" title="Close"><span class="msi">close</span></button>
+    <div class="ai-header-actions">
+      <button class="ai-header-btn" id="ai-minimize-btn" title="Minimize">
+        <span class="msi">remove</span>
+      </button>
+      <button class="ai-header-btn" id="ai-panel-close" title="Close">
+        <span class="msi">close</span>
+      </button>
+    </div>
+    <!-- minimized pill content (shown only when minimized) -->
+    <div class="ai-pill-info">
+      <span class="msi" style="font-size:15px;color:var(--accent)">smart_toy</span>
+      <span class="ai-pill-label">AI Tutor</span>
+      <span class="ai-pill-dot" id="ai-pill-dot"></span>
+    </div>
   </div>
 
-  <!-- View: choose provider (first time only) -->
+  <!-- ── VIEW 1: choose provider ───────────────── -->
   <div class="ai-view" id="ai-view-select">
     <div class="ai-view-intro">
       <div class="ai-view-intro-title">Choose your AI Tutor</div>
@@ -693,7 +710,7 @@
     </div>
   </div>
 
-  <!-- View: enter API key -->
+  <!-- ── VIEW 2: enter API key ─────────────────── -->
   <div class="ai-view hidden" id="ai-view-key">
     <div class="ai-view-intro">
       <div class="ai-view-intro-title">Add your Gemini API key</div>
@@ -703,28 +720,213 @@
     </div>
     <div class="ai-key-field">
       <input type="password" id="ai-key-input" class="input-field" placeholder="Paste your Gemini API key">
-      <button class="ai-key-toggle" id="ai-key-toggle" type="button" title="Show key"><span class="msi">visibility</span></button>
+      <button class="ai-key-toggle" id="ai-key-toggle" type="button" title="Show key">
+        <span class="msi">visibility</span>
+      </button>
     </div>
     <button class="btn btn-accent" id="ai-key-save" style="width:100%;margin-top:12px;">Save and continue</button>
   </div>
 
-  <!-- View: conversation -->
+  <!-- ── VIEW 3: avatar + conversation ─────────── -->
   <div class="ai-view hidden" id="ai-view-chat">
-    <div class="ai-messages" id="ai-messages"></div>
-    <div class="ai-footer">
-      <div class="wave-bars ai-wave-bars" id="ai-wave-bars">
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-        <div class="bar"></div><div class="bar"></div>
+
+    <!-- AVATAR ZONE -->
+    <div class="av-zone">
+
+      <!-- halo rings -->
+      <div class="av-halo" id="av-halo1"></div>
+      <div class="av-halo" id="av-halo2"></div>
+      <div class="av-halo" id="av-halo3"></div>
+
+      <!-- ROBOT SVG -->
+      <div class="av-wrap" id="av-wrap">
+        <svg class="av-svg" viewBox="0 0 110 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- gradients -->
+            <radialGradient id="avAntGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#f19e8e" stop-opacity=".95"/>
+              <stop offset="100%" stop-color="#c96b5c" stop-opacity=".2"/>
+            </radialGradient>
+            <linearGradient id="avHeadGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#252730"/>
+              <stop offset="100%" stop-color="#16171b"/>
+            </linearGradient>
+            <linearGradient id="avVisorGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#0c0d10"/>
+              <stop offset="100%" stop-color="#080909"/>
+            </linearGradient>
+            <linearGradient id="avBodyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#2a2c34"/>
+              <stop offset="100%" stop-color="#1a1b20"/>
+            </linearGradient>
+            <linearGradient id="avStripe" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="#e5897a"/>
+              <stop offset="100%" stop-color="#f19e8e"/>
+            </linearGradient>
+            <radialGradient id="avEyeGlow" cx="50%" cy="35%" r="60%">
+              <stop offset="0%"   stop-color="#fff0c0"/>
+              <stop offset="55%"  stop-color="#e9c349"/>
+              <stop offset="100%" stop-color="#9a6a00"/>
+            </radialGradient>
+            <radialGradient id="avChestGlow" cx="50%" cy="30%" r="70%">
+              <stop offset="0%"   stop-color="rgba(229,137,122,0.12)"/>
+              <stop offset="100%" stop-color="rgba(229,137,122,0)"/>
+            </radialGradient>
+            <filter id="avGlow">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- ── ANTENNA ── -->
+          <line x1="55" y1="4" x2="55" y2="17" stroke="#2a2c34" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="55" cy="3.5" r="5.5" fill="url(#avAntGlow)">
+            <animate attributeName="r"       values="5;6.2;5"     dur="2.1s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values=".8;1;.8"     dur="2.1s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="55" cy="3.5" r="10" fill="#e5897a" opacity="0">
+            <animate attributeName="r"       values="6;14;6"       dur="2.1s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values=".22;0;.22"    dur="2.1s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- ── HEAD ── -->
+          <rect x="16" y="16" width="78" height="50" rx="22"
+                fill="url(#avHeadGrad)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+          <!-- head top sheen -->
+          <ellipse cx="55" cy="20" rx="30" ry="8" fill="rgba(255,255,255,0.04)"/>
+
+          <!-- VISOR panel -->
+          <rect x="21" y="22" width="68" height="38" rx="17" fill="url(#avVisorGrad)"/>
+          <!-- visor reflection -->
+          <rect x="24" y="23" width="60" height="9" rx="14" fill="rgba(255,255,255,0.035)"/>
+
+          <!-- ── LEFT EYE ── -->
+          <g class="av-eye-l" style="transform-origin:34px 41px">
+            <rect x="25" y="32" width="18" height="18" rx="6" fill="#0a0b0d"/>
+            <rect x="27" y="34" width="14" height="14" rx="5" fill="url(#avEyeGlow)" filter="url(#avGlow)"/>
+            <circle cx="34" cy="41" r="4"   fill="#180f00"/>
+            <circle cx="37" cy="37" r="1.8" fill="rgba(255,248,220,0.65)"/>
+            <rect x="25" y="32" width="18" height="18" rx="6"
+                  fill="rgba(0,0,0,0)" class="av-blink-mask-l"/>
+          </g>
+
+          <!-- ── RIGHT EYE ── -->
+          <g class="av-eye-r" style="transform-origin:76px 41px">
+            <rect x="67" y="32" width="18" height="18" rx="6" fill="#0a0b0d"/>
+            <rect x="69" y="34" width="14" height="14" rx="5" fill="url(#avEyeGlow)" filter="url(#avGlow)"/>
+            <circle cx="76" cy="41" r="4"   fill="#180f00"/>
+            <circle cx="79" cy="37" r="1.8" fill="rgba(255,248,220,0.65)"/>
+            <rect x="67" y="32" width="18" height="18" rx="6"
+                  fill="rgba(0,0,0,0)" class="av-blink-mask-r"/>
+          </g>
+
+          <!-- ── MOUTH ── (path driven by JS) -->
+          <path id="av-mouth" d="M 38 54 Q 55 60 72 54"
+                stroke="rgba(229,137,122,0.6)" stroke-width="2.2"
+                stroke-linecap="round" fill="none"/>
+
+          <!-- ── NECK ── -->
+          <rect x="45" y="66" width="20" height="9" rx="4.5"
+                fill="#1c1d22" stroke="rgba(255,255,255,0.04)" stroke-width=".5"/>
+
+          <!-- ── BODY ── -->
+          <g class="av-chest">
+            <rect x="12" y="75" width="86" height="50" rx="18"
+                  fill="url(#avBodyGrad)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+            <!-- chest highlight -->
+            <ellipse cx="55" cy="80" rx="34" ry="10" fill="rgba(255,255,255,0.04)"/>
+            <!-- chest glow -->
+            <ellipse cx="55" cy="85" rx="30" ry="18" fill="url(#avChestGlow)"/>
+
+            <!-- accent stripe -->
+            <rect x="26" y="82" width="58" height="3.5" rx="1.75"
+                  fill="url(#avStripe)" opacity=".75"/>
+
+            <!-- indicator panel -->
+            <rect x="33" y="90" width="44" height="24" rx="8"
+                  fill="rgba(0,0,0,.4)" stroke="rgba(255,255,255,0.05)" stroke-width=".5"/>
+
+            <!-- light 1 coral -->
+            <circle cx="43" cy="102" r="5" fill="#e5897a" opacity=".9">
+              <animate attributeName="opacity" values=".55;1;.55" dur="1.9s" repeatCount="indefinite"/>
+            </circle>
+            <!-- light 2 blue -->
+            <circle cx="55" cy="102" r="4" fill="#6d9bc7" opacity=".7">
+              <animate attributeName="opacity" values=".35;.85;.35" dur="2.5s" repeatCount="indefinite" begin=".45s"/>
+            </circle>
+            <!-- light 3 gold -->
+            <circle cx="66" cy="102" r="3.5" fill="#e9c349" opacity=".6">
+              <animate attributeName="opacity" values=".3;.75;.3" dur="1.7s" repeatCount="indefinite" begin=".9s"/>
+            </circle>
+          </g>
+
+          <!-- ── LEFT ARM ── (id for JS wave gesture) -->
+          <g id="av-arm-l" class="av-arm-l">
+            <rect x="0" y="78" width="12" height="34" rx="6"
+                  fill="url(#avBodyGrad)" stroke="rgba(255,255,255,0.05)" stroke-width=".6"/>
+            <!-- hand nub -->
+            <circle cx="6" cy="114" r="5" fill="url(#avBodyGrad)" stroke="rgba(255,255,255,0.05)" stroke-width=".5"/>
+          </g>
+
+          <!-- ── RIGHT ARM ── -->
+          <g id="av-arm-r" class="av-arm-r">
+            <rect x="98" y="78" width="12" height="34" rx="6"
+                  fill="url(#avBodyGrad)" stroke="rgba(255,255,255,0.05)" stroke-width=".6"/>
+            <circle cx="104" cy="114" r="5" fill="url(#avBodyGrad)" stroke="rgba(255,255,255,0.05)" stroke-width=".5"/>
+          </g>
+
+          <!-- ── THINKING DOTS (hidden by default) ── -->
+          <g id="av-think-dots" class="av-think-dots">
+            <circle class="av-td" cx="28" cy="14" r="4.5" fill="#e5897a"/>
+            <circle class="av-td" cx="55" cy="9"  r="4.5" fill="#e5897a" style="animation-delay:.22s"/>
+            <circle class="av-td" cx="82" cy="14" r="4.5" fill="#e5897a" style="animation-delay:.44s"/>
+          </g>
+
+        </svg>
+      </div><!-- /av-wrap -->
+
+      <!-- state label -->
+      <div class="av-label" id="av-label">Idle</div>
+
+      <!-- WAVE BARS -->
+      <div class="av-wave-wrap" id="av-wave">
+        <div class="av-bar"></div><div class="av-bar"></div><div class="av-bar"></div>
+        <div class="av-bar"></div><div class="av-bar"></div><div class="av-bar"></div>
+        <div class="av-bar"></div><div class="av-bar"></div><div class="av-bar"></div>
+        <div class="av-bar"></div><div class="av-bar"></div><div class="av-bar"></div>
       </div>
+
+    </div><!-- /av-zone -->
+
+    <!-- CONVERSATION AREA (single bubbles, no history) -->
+    <div class="av-convo">
+
+      <!-- AI bubble — floats below avatar, replaces each turn -->
+      <div class="av-model-bubble av-bubble-empty" id="ai-model-bubble">
+        <span class="av-bubble-sender">AI Tutor</span>
+        <span class="av-bubble-text" id="ai-model-text"></span>
+      </div>
+
+      <!-- User bubble — single, updates in real-time -->
+      <div class="av-user-bubble av-bubble-empty" id="ai-user-bubble"></div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="ai-footer">
       <div class="ai-footer-controls">
-        <button class="mic-btn-circle ai-mic-btn" id="ai-mic-btn" title="Start talking"><span class="msi msi-mic-lg">mic</span></button>
-        <button class="btn btn-ghost btn-sm" id="ai-end-btn"><span class="msi">call_end</span> End session</button>
+        <button class="ai-mic-circle" id="ai-mic-btn" title="Start talking">
+          <span class="msi" style="font-size:28px;color:var(--text2)">mic</span>
+        </button>
+        <button class="btn btn-ghost btn-sm" id="ai-end-btn">
+          <span class="msi">call_end</span> End session
+        </button>
       </div>
     </div>
-  </div>
-</div>
 
+  </div><!-- /ai-view-chat -->
+
+</div><!-- /ai-panel -->
 <script src="db.js"></script>
 <script src="gemini-live.js"></script>
 <script src="ai-tutor.js"></script>

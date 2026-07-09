@@ -22,7 +22,7 @@ const GEMINI_WS_DEVELOPER = (token) =>
   `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContentConstrained?access_token=${token}`;
 
 const MIC_SAMPLE_RATE = 16000;
-const PLAYBACK_SAMPLE_RATE = 24000;
+const PLAYBACK_SAMPLE_RATE = 22050;
 
 class GeminiLiveClient {
   constructor(opts = {}) {
